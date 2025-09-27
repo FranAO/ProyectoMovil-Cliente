@@ -20,7 +20,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Incluir el layout de la barra -->
         <include layout="@layout/navigation_bar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
