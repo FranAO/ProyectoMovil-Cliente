@@ -4,9 +4,7 @@ import android.content.Context;
 import android.os.StrictMode;
 import android.widget.Toast;
 
-import com.example.proyectomovil.Models.Package;
 import com.example.proyectomovil.Models.Student;
-import com.example.proyectomovil.Models.Ticket;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,51 +30,6 @@ public class DataSyncManager {
         this.dbHelper = new DBHelper(context);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
     }
-
-    // Sincronizar Paquetes (GET)
-    public void sincronizarPaquetes() {
-        try {
-            URL url = new URL(API_URL + "/package");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                StringBuilder respuesta = new StringBuilder();
-                String linea;
-
-                while ((linea = reader.readLine()) != null) {
-                    respuesta.append(linea);
-                }
-
-                JSONArray array = new JSONArray(respuesta.toString());
-
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject obj = array.getJSONObject(i);
-
-                    Package pkg = new Package(
-                            obj.optString("id"),
-                            obj.optString("name"),
-                            obj.optString("description"),
-                            String.valueOf(obj.optInt("ticketCount")),
-                            obj.optDouble("price"),
-                            obj.optInt("durationDays"),
-                            obj.optBoolean("active")
-                    );
-
-                    if (!dbHelper.editarPackage(pkg)) {
-                        dbHelper.insertarPackage(pkg);
-                    }
-                }
-                Toast.makeText(context, "Paquetes sincronizados", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Error al sincronizar paquetes: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // Sincronizar estudiante por email desde web (GET)
     public Student sincronizarEstudiantePorEmail(String email) {
         try {
             URL url = new URL(API_URL + "/student/email/" + email);
@@ -184,56 +137,6 @@ public class DataSyncManager {
         }
     }
 
-    public void sincronizarTickets() {
-        try {
-            URL url = new URL(API_URL + "/ticket");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                StringBuilder respuesta = new StringBuilder();
-                String linea;
-
-                while ((linea = reader.readLine()) != null) {
-                    respuesta.append(linea);
-                }
-
-                JSONArray array = new JSONArray(respuesta.toString());
-
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject obj = array.getJSONObject(i);
-
-                    String fechaStr = obj.optString("purchaseDate");
-                    Date fecha = null;
-                    if (fechaStr != null && !fechaStr.isEmpty()) {
-                        try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-                            fecha = sdf.parse(fechaStr);
-                        } catch (Exception ex) {
-                        }
-                    }
-
-                    Ticket ticket = new Ticket(
-                            obj.optString("id"),
-                            obj.optString("studentId"),
-                            obj.optString("packageId"),
-                            obj.optString("status"),
-                            fecha
-                    );
-
-                    if (!dbHelper.editarTicket(ticket)) {
-                        dbHelper.insertarTicket(ticket);
-                    }
-                }
-                Toast.makeText(context, "Tickets sincronizados", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Enviar Estudiante (POST) - Retorna el estudiante con el ID generado por la web
     public Student enviarEstudiante(Student student) {
         try {
             URL url = new URL(API_URL + "/student");
@@ -320,31 +223,7 @@ public class DataSyncManager {
         return null;
     }
 
-    // Enviar Ticket (Compra)
-    public void enviarCompraTicket(String studentId, String packageId) {
-        try {
-            String urlParams = API_URL + "/ticket/purchase-package?studentId=" + studentId + "&packageId=" + packageId;
-            URL url = new URL(urlParams);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setDoOutput(true);
 
-            int code = con.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                Toast.makeText(context, "Compra realizada en web", Toast.LENGTH_SHORT).show();
-                sincronizarTickets();
-            } else {
-                Toast.makeText(context, "Error en compra web: " + code, Toast.LENGTH_LONG).show();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Error de conexión: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    // --- MÉTODOS PUT (Actualizar) ---
 
     public void actualizarEstudiante(Student student) {
         try {
@@ -380,41 +259,7 @@ public class DataSyncManager {
         }
     }
 
-    public void actualizarPaquete(Package pkg) {
-        try {
-            URL url = new URL(API_URL + "/package/" + pkg.getId());
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("PUT");
-            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            con.setDoOutput(true);
 
-            JSONObject json = new JSONObject();
-            json.put("id", pkg.getId());
-            json.put("name", pkg.getName());
-            json.put("description", pkg.getDescription());
-            json.put("ticketCount", Integer.parseInt(pkg.getTicketCount()));
-            json.put("price", pkg.getPrice());
-            json.put("durationDays", pkg.getDurationsDays());
-            json.put("active", pkg.isActive());
-
-            try (OutputStream os = con.getOutputStream()) {
-                byte[] input = json.toString().getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-
-            int code = con.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                Toast.makeText(context, "Paquete actualizado en web", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Error al actualizar paquete: " + code, Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    // --- MÉTODOS DELETE (Eliminar) ---
 
     public void eliminarEstudiante(String id) {
         try {
@@ -434,25 +279,7 @@ public class DataSyncManager {
         }
     }
 
-    public void eliminarPaquete(String id) {
-        try {
-            URL url = new URL(API_URL + "/package/" + id);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("DELETE");
 
-            int code = con.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                Toast.makeText(context, "Paquete eliminado de web", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Error al eliminar paquete: " + code, Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    // Sincronizar todos los estudiantes locales a la web
     public void sincronizarEstudiantesLocalesAWeb() {
         try {
             ArrayList<Student> estudiantesLocales = dbHelper.obtenerStudents();

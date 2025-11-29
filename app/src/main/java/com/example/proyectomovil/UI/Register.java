@@ -60,26 +60,22 @@ public class Register extends AppCompatActivity {
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
-        // Validar que todos los campos estén completos
         if (firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validar que las contraseñas coincidan
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Primero verificar en la base de datos local
         Student existente = dbHelper.obtenerStudentPorEmail(email);
         if (existente != null) {
             Toast.makeText(this, "Este correo ya está registrado", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Crear nuevo estudiante con ID temporal
         final Student nuevoStudent = new Student(
                 UUID.randomUUID().toString(),
                 firstName,
@@ -91,7 +87,6 @@ public class Register extends AppCompatActivity {
                 new Date()
         );
 
-        // Primero guardar localmente para garantizar acceso inmediato
         boolean guardadoLocal = dbHelper.insertarStudent(nuevoStudent);
         
         if (!guardadoLocal) {
@@ -101,7 +96,6 @@ public class Register extends AppCompatActivity {
 
         Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
         
-        // Intentar sincronizar con el servidor en segundo plano
         new Thread(() -> {
             try {
                 com.example.proyectomovil.Database.DataSyncManager syncManager = 
@@ -110,7 +104,6 @@ public class Register extends AppCompatActivity {
                 Student studentConIdWeb = syncManager.enviarEstudiante(nuevoStudent);
                 
                 if (studentConIdWeb != null) {
-                    // Actualizar el ID local con el ID de la web
                     dbHelper.eliminarStudent(nuevoStudent.getId());
                     dbHelper.insertarStudent(studentConIdWeb);
                     android.util.Log.d("Register", "Estudiante sincronizado con servidor con ID: " + studentConIdWeb.getId());
@@ -120,7 +113,6 @@ public class Register extends AppCompatActivity {
             }
         }).start();
         
-        // Ir al login inmediatamente
         goToLogin();
     }
 

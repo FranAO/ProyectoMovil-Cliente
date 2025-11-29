@@ -19,11 +19,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.proyectomovil.Database.DataSyncManager;
 import com.example.proyectomovil.Database.DBHelper;
 import com.example.proyectomovil.Models.Student;
 import com.example.proyectomovil.R;
 import com.google.android.material.button.MaterialButton;
 
+import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.Executor;
 
 public class Login extends AppCompatActivity {
@@ -129,21 +135,42 @@ public class Login extends AppCompatActivity {
             return;
         }
 
-        DBHelper dbHelper = new DBHelper(this);
-        Student student = dbHelper.obtenerStudentPorEmail(email);
+        new Thread(() -> {
+            try {
+                URL url = new URL("http://10.0.2.2:5090/api/Auth/login");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                con.setDoOutput(true);
 
-        if (student == null) {
-            Toast.makeText(this, "Correo no registrado", Toast.LENGTH_SHORT).show();
-            return;
-        }
+                JSONObject loginData = new JSONObject();
+                loginData.put("email", email);
+                loginData.put("password", password);
 
-        if (!student.getPaswordHash().equals(password)) {
-            Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
-            return;
-        }
+                con.getOutputStream().write(loginData.toString().getBytes());
 
-        saveLoggedInUser(email);
-        goToMain();
+                int responseCode = con.getResponseCode();
+                
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    DataSyncManager syncManager = new DataSyncManager(this);
+                    Student student = syncManager.sincronizarEstudiantePorEmail(email);
+
+                    runOnUiThread(() -> {
+                        if (student != null) {
+                            saveLoggedInUser(email);
+                            goToMain();
+                        } else {
+                            Toast.makeText(this, "Error al sincronizar datos", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Error de conexión: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 
     private void handleRegister() {

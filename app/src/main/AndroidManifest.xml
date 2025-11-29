@@ -51,6 +51,16 @@
         <activity
             android:name=".UI.MainActivity"
             android:exported="true"/>
+        <activity
+            android:name=".UI.TicketDetailActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.PaymentQRActivity"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/api_key" />
     </application>
 
 </manifest>

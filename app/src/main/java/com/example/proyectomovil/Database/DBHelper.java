@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import com.example.proyectomovil.Models.Student;
-import com.example.proyectomovil.Models.Ticket;
-import com.example.proyectomovil.Models.Package;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ import java.util.Locale;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ValleRouteDB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 
     public DBHelper(@Nullable Context context) {
@@ -36,31 +34,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 "passwordHash TEXT, " +
                 "role TEXT, " +
                 "createdAt TEXT)");
-
-        db.execSQL("CREATE TABLE tickets (" +
-                "id TEXT PRIMARY KEY, " +
-                "studentId TEXT, " +
-                "packageId TEXT, " +
-                "status TEXT, " +
-                "purchaseDate TEXT, " +
-                "FOREIGN KEY(studentId) REFERENCES students(id))");
-
-        db.execSQL("CREATE TABLE packages (" +
-                "id TEXT PRIMARY KEY, " +
-                "name TEXT, " +
-                "description TEXT, " +
-                "ticketCount TEXT, " +
-                "price REAL, " +
-                "durationDays INTEGER, " +
-                "active INTEGER)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS students");
-        db.execSQL("DROP TABLE IF EXISTS tickets");
-        db.execSQL("DROP TABLE IF EXISTS packages");
-        onCreate(db);
     }
 
     public boolean insertarStudent(Student student) {
@@ -159,176 +136,5 @@ public class DBHelper extends SQLiteOpenHelper {
         return student;
     }
 
-    public boolean insertarTicket(Ticket ticket) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("id", ticket.getId());
-        values.put("studentId", ticket.getStudentId());
-        values.put("packageId", ticket.getPackageId());
-        values.put("status", ticket.getStatus());
-        values.put("purchaseDate", ticket.getPurchaseDate() != null ? dateFormatter.format(ticket.getPurchaseDate()) : null);
 
-        long resultado = db.insert("tickets", null, values);
-        return resultado != -1;
-    }
-
-    public boolean editarTicket(Ticket ticket) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("studentId", ticket.getStudentId());
-        values.put("packageId", ticket.getPackageId());
-        values.put("status", ticket.getStatus());
-        values.put("purchaseDate", ticket.getPurchaseDate() != null ? dateFormatter.format(ticket.getPurchaseDate()) : null);
-
-        int editar = db.update("tickets", values, "id = ?", new String[]{ticket.getId()});
-        return editar > 0;
-    }
-
-    public boolean eliminarTicket(String id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int eliminar = db.delete("tickets", "id = ?", new String[]{id});
-        return eliminar > 0;
-    }
-
-    public ArrayList<Ticket> obtenerTickets() {
-        ArrayList<Ticket> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM tickets", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Date purchaseDate = null;
-                try {
-                    if (cursor.getString(4) != null) {
-                        purchaseDate = dateFormatter.parse(cursor.getString(4));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Ticket ticket = new Ticket(
-                        cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        purchaseDate
-                );
-                lista.add(ticket);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return lista;
-    }
-
-    public ArrayList<Ticket> obtenerTicketsPorEstudiante(String studentId) {
-        ArrayList<Ticket> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM tickets WHERE studentId = ?", new String[]{studentId});
-        if (cursor.moveToFirst()) {
-            do {
-                Date purchaseDate = null;
-                try {
-                    if (cursor.getString(4) != null) {
-                        purchaseDate = dateFormatter.parse(cursor.getString(4));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Ticket ticket = new Ticket(
-                        cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        purchaseDate
-                );
-                lista.add(ticket);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return lista;
-    }
-
-    public boolean insertarPackage(Package pkg) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("id", pkg.getId());
-        values.put("name", pkg.getName());
-        values.put("description", pkg.getDescription());
-        values.put("ticketCount", pkg.getTicketCount());
-        values.put("price", pkg.getPrice());
-        values.put("durationDays", pkg.getDurationsDays());
-        values.put("active", pkg.isActive() ? 1 : 0);
-
-        long resultado = db.insert("packages", null, values);
-        return resultado != -1;
-    }
-
-    public boolean editarPackage(Package pkg) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("name", pkg.getName());
-        values.put("description", pkg.getDescription());
-        values.put("ticketCount", pkg.getTicketCount());
-        values.put("price", pkg.getPrice());
-        values.put("durationDays", pkg.getDurationsDays());
-        values.put("active", pkg.isActive() ? 1 : 0);
-
-        int editar = db.update("packages", values, "id = ?", new String[]{pkg.getId()});
-        return editar > 0;
-    }
-
-    public boolean eliminarPackage(String id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int eliminar = db.delete("packages", "id = ?", new String[]{id});
-        return eliminar > 0;
-    }
-
-    public ArrayList<Package> obtenerPackages() {
-        ArrayList<Package> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM packages", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Package pkg = new Package(
-                        cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getDouble(4),
-                        cursor.getInt(5),
-                        cursor.getInt(6) == 1
-                );
-                lista.add(pkg);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return lista;
-    }
-
-    public ArrayList<Package> obtenerPackagesActivos() {
-        ArrayList<Package> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM packages WHERE active = 1", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Package pkg = new Package(
-                        cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getDouble(4),
-                        cursor.getInt(5),
-                        cursor.getInt(6) == 1
-                );
-                lista.add(pkg);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return lista;
-    }
-
-    public void limpiarTodasLasTablas() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM tickets");
-        db.execSQL("DELETE FROM packages");
-        db.execSQL("DELETE FROM students");
-    }
 }

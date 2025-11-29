@@ -6,4 +6,5 @@
     <string name="nombre_bus">Nombre Bus</string>
     <string name="fecha_bus">Fecha Bus</string>
     <string name="hora_bus">Hora Bus</string>
+    <string name="api_key">AIzaSyDiHCfCjzf-C8A8ZaYPknAQEoJ_WYTxhhk</string>
 </resources>

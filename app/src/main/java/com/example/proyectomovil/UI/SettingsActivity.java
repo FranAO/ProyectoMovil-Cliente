@@ -77,16 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         logoutCard.setOnClickListener(v -> {
-            // Limpiar datos de sesión
-            prefs.edit().clear().apply();
-            
-            Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
-            
-            // Ir a Login
-            Intent intent = new Intent(SettingsActivity.this, Login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            promptLogout();
         });
     }
 
@@ -179,5 +170,29 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putString(BIOMETRIC_USER_ID, userId);
         }
         editor.apply();
+    }
+
+    private void promptLogout() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Cerrar Sesión")
+                .setMessage("¿Estás seguro de que quieres cerrar la sesión?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    performLogout();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void performLogout() {
+        prefs.edit()
+                .remove(LOGGED_IN_USER_EMAIL)
+                .apply();
+        
+        Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+        
+        Intent intent = new Intent(SettingsActivity.this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
