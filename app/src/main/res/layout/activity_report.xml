@@ -154,22 +154,17 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="16dp"
-                            android:src="@drawable/advertencia"
+                            android:src="@drawable/bus"
                             android:scaleType="centerInside"
                             app:tint="#8D0743" />
 
-                        <EditText
-                            android:id="@+id/subjectEditText"
+                        <Spinner
+                            android:id="@+id/tripSpinner"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Queja"
-                            android:inputType="text"
-                            android:textColor="#8D0743"
-                            android:textColorHint="#9CADBA"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif" />
+                            android:spinnerMode="dropdown" />
 
                     </LinearLayout>
 
