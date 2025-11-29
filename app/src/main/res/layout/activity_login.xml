@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/modern_gradient_bg"
-    tools:context=".Login">
+    tools:context=".UI.Login">
 
     <View
         android:id="@+id/circle1"

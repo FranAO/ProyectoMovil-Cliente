@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">ProyectoMovil</string>
-    <string name="fecha_ticket"></string>
-    <string name="nombre_usuario"></string>
-    <string name="cantidad_pasajeros"></string>
-    <string name="nombre_bus"></string>
-    <string name="fecha_bus"></string>
-    <string name="hora_bus"></string>
+    <string name="fecha_ticket">Fecha Ticket</string>
+    <string name="nombre_usuario">Nombre Usuario</string>
+    <string name="cantidad_pasajeros">Cantidad Pasajeros</string>
+    <string name="nombre_bus">Nombre Bus</string>
+    <string name="fecha_bus">Fecha Bus</string>
+    <string name="hora_bus">Hora Bus</string>
 </resources>

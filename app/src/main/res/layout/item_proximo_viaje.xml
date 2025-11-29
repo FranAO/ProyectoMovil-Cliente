@@ -85,6 +85,8 @@
                 app:cardBackgroundColor="#9CADBA"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
@@ -94,7 +96,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ruta"
+                    android:src="@drawable/ubicacion"
                     android:tint="#FFFFFD"
                     tools:ignore="UseAppTint" />
 

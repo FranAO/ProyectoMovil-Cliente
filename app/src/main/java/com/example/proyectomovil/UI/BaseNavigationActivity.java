@@ -1,4 +1,4 @@
-package com.example.proyectomovil;
+package com.example.proyectomovil.UI;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
+
+import com.example.proyectomovil.R;
 
 public abstract class BaseNavigationActivity extends AppCompatActivity {
 
@@ -102,16 +104,16 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
                 }
                 break;
             case 1:
-                if (!(this instanceof RouteActivity)) {
-                    intent = new Intent(this, RouteActivity.class);
+                if (!(this instanceof BusesActivity)) {
+                    intent = new Intent(this, BusesActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                     finish();
                 }
                 break;
             case 2:
-                if (!(this instanceof BusesActivity)) {
-                    intent = new Intent(this, BusesActivity.class);
+                if (!(this instanceof PackagesActivity)) {
+                    intent = new Intent(this, PackagesActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                     finish();
@@ -164,10 +166,10 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         ObjectAnimator scaleXLabel = ObjectAnimator.ofFloat(labels[index], "scaleX", 1.0f);
         ObjectAnimator scaleYLabel = ObjectAnimator.ofFloat(labels[index], "scaleY", 1.0f);
 
-        scaleXIcon.setDuration(200);
-        scaleYIcon.setDuration(200);
-        scaleXLabel.setDuration(200);
-        scaleYLabel.setDuration(200);
+        scaleXIcon.setDuration(100);
+        scaleYIcon.setDuration(100);
+        scaleXLabel.setDuration(100);
+        scaleYLabel.setDuration(100);
 
         scaleXIcon.start();
         scaleYIcon.start();
@@ -188,10 +190,10 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         ObjectAnimator scaleXLabel = ObjectAnimator.ofFloat(labels[index], "scaleX", 1.1f);
         ObjectAnimator scaleYLabel = ObjectAnimator.ofFloat(labels[index], "scaleY", 1.1f);
 
-        scaleXIcon.setDuration(300);
-        scaleYIcon.setDuration(300);
-        scaleXLabel.setDuration(300);
-        scaleYLabel.setDuration(300);
+        scaleXIcon.setDuration(80);
+        scaleYIcon.setDuration(80);
+        scaleXLabel.setDuration(80);
+        scaleYLabel.setDuration(80);
 
         scaleXIcon.setInterpolator(new DecelerateInterpolator());
         scaleYIcon.setInterpolator(new DecelerateInterpolator());
@@ -205,7 +207,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
         // Animación de bounce para el icono
         ObjectAnimator bounceAnimator = ObjectAnimator.ofFloat(icons[index], "translationY", 0, -10, 0);
-        bounceAnimator.setDuration(400);
+        bounceAnimator.setDuration(150);
         bounceAnimator.setInterpolator(new DecelerateInterpolator());
         bounceAnimator.start();
     }
@@ -225,14 +227,13 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
             // Animar el movimiento del indicador
             ObjectAnimator animator = ObjectAnimator.ofFloat(slidingIndicator, "x", targetX);
-            animator.setDuration(400);
+            animator.setDuration(150);
             animator.setInterpolator(new DecelerateInterpolator());
 
-            // Agregar animación de escala durante el movimiento
             ObjectAnimator scaleX = ObjectAnimator.ofFloat(slidingIndicator, "scaleX", 0.8f, 1.2f, 1.0f);
             ObjectAnimator scaleY = ObjectAnimator.ofFloat(slidingIndicator, "scaleY", 0.8f, 1.2f, 1.0f);
-            scaleX.setDuration(400);
-            scaleY.setDuration(400);
+            scaleX.setDuration(150);
+            scaleY.setDuration(150);
 
             animator.start();
             scaleX.start();

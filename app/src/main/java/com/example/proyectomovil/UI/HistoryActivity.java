@@ -1,8 +1,10 @@
-package com.example.proyectomovil;
+package com.example.proyectomovil.UI;
 
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+
+import com.example.proyectomovil.R;
 
 public class HistoryActivity extends BaseNavigationActivity {
 

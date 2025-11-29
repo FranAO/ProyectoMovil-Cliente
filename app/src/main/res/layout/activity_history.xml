@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HistoryActivity">
+    android:background="@drawable/modern_gradient_bg"
+    tools:context=".UI.HistoryActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigation_bar"

@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardContainer"
         android:layout_width="350dp"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="#8D0743"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp"
@@ -19,7 +19,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="16dp">
 
             <androidx.cardview.widget.CardView
@@ -30,8 +30,7 @@
                 app:cardCornerRadius="24dp"
                 app:cardElevation="4dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/ivBusIcon"
@@ -52,10 +51,10 @@
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/mapIconContainer"
                 app:layout_constraintStart_toEndOf="@+id/busIconContainer"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="@+id/busIconContainer"
+                app:layout_constraintBottom_toBottomOf="@+id/busIconContainer">
 
                 <TextView
                     android:id="@+id/tvBusNumber"
@@ -87,8 +86,8 @@
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="@+id/busIconContainer"
+                app:layout_constraintBottom_toBottomOf="@+id/busIconContainer">
 
                 <ImageView
                     android:id="@+id/ivMapIcon"
@@ -98,6 +97,49 @@
                     android:src="@drawable/ruta"
                     android:tint="#FFFFFD"
                     tools:ignore="UseAppTint" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btnComprarTicket"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FFFFFD"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/busIconContainer">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/tickets"
+                        android:tint="#8D0743"
+                        tools:ignore="UseAppTint" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Comprar Ticket"
+                        android:textColor="#8D0743"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 

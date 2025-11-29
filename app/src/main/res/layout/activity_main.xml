@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/modern_gradient_bg"
-    tools:context=".MainActivity">
+    tools:context=".UI.MainActivity">
 
-    <!-- Círculos decorativos de fondo -->
     <View
         android:id="@+id/circle1"
         android:layout_width="180dp"
@@ -36,6 +35,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/navigation_bar"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -114,19 +114,21 @@
                     </LinearLayout>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/notificationCard"
+                        android:id="@+id/SettingsCard"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:backgroundTint="#FFFFFD"
                         app:cardCornerRadius="22dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:cardElevation="2dp">
 
                         <ImageView
-                            android:id="@+id/ivNotifications"
+                            android:id="@+id/ivSettings"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/advertencia"
+                            android:src="@drawable/ajustes"
                             app:tint="#8D0743" />
 
                     </androidx.cardview.widget.CardView>
